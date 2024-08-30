@@ -1,0 +1,98 @@
+
+adb -s a1185158  shell monkey -v --throttle 1 --ignore-crashes --hprof --monitor-native-crashes --ignore-timeouts --kill-process-after-error --ignore-security-exceptions -v 72000
+
+adb -s a1185158 shell monkey -v --throttle 50 --ignore-crashes --hprof --monitor-native-crashes --ignore-timeouts --kill-process-after-error --ignore-security-exceptions -p in.amazon.mShop.android.shopping -v 720000
+
+adb -s a1185158 shell monkey -p com.android.launcher --pct-touch 30 --pct-motion 20 --pct-appswitch 10 --pct-trackball 5 --pct-nav 10 --throttle 50 --ignore-crashes --hprof --monitor-native-crashes --ignore-timeouts --kill-process-after-error --ignore-security-exceptions -v 20000 
+
+
+Monket.py
+
+adb -s a1185158 shell "
+  monkey \
+    -p com.android.systemui \
+    -p com.android.settings \
+    --pct-touch 30 \
+    --pct-motion 20 \
+    --pct-trackball 20 \
+    --pct-nav 10 \
+    --pct-majornav 10 \
+    --pct-appswitch 5 \
+    --pct-flip 1 \
+    --pct-anyevent 4 \
+    --throttle 50 \
+    --ignore-crashes \
+    --ignore-timeouts \
+    --ignore-security-exceptions \
+    --monitor-native-crashes \
+    --kill-process-after-error \
+    -v -v -v \
+    100000 \
+  & \
+  for i in {1..5}; do \
+    dd if=/dev/zero of=/sdcard/test$i.dat bs=4M count=256; \
+    rm /sdcard/test$i.dat; \
+  done \
+  & \
+  while true; do \
+    yes > /dev/null & \
+    sleep 5; \
+    killall yes; \
+  done
+"
+
+
+
+updatedmonkey.py
+
+adb -s a1185158 shell "
+  monkey \
+    -p com.android.systemui \
+    -p com.android.settings \
+    -p com.android.chrome \
+    -p com.google.android.gm \
+    -p com.android.vending \
+    --pct-touch 35 \
+    --pct-motion 25 \
+    --pct-trackball 15 \
+    --pct-nav 10 \
+    --pct-majornav 10 \
+    --pct-appswitch 3 \
+    --pct-flip 1 \
+    --pct-anyevent 1 \
+    --throttle 30 \
+    --ignore-crashes \
+    --ignore-timeouts \
+    --ignore-security-exceptions \
+    --monitor-native-crashes \
+    --kill-process-after-error \
+    -v -v -v \
+    1000000 \
+  & \
+  for i in {1..10}; do \
+    dd if=/dev/zero of=/sdcard/test$i.dat bs=8M count=512; \
+    rm /sdcard/test$i.dat; \
+  done \
+  & \
+  while true; do \
+    yes > /dev/null & \
+    sleep 5; \
+    killall yes; \
+  done \
+  & \
+  while true; do \
+    svc wifi disable
+    sleep 30
+    svc wifi enable
+    sleep 60
+    svc data disable
+    sleep 30
+    svc data enable
+    sleep 60
+    ping -c 5 8.8.8.8
+    sleep 30
+  done
+"
+
+
+
